@@ -1,0 +1,24 @@
+import pandas as pd
+
+# Load the CSV data into a pandas DataFrame
+data = pd.read_csv("customer_data.csv")
+
+# Convert transaction_date to datetime
+data['transaction_date'] = pd.to_datetime(data['transaction_date'])
+
+# Calculate total amount spent by each customer
+total_spent = data.groupby('customer_id')['amount_spent'].sum()
+
+# Calculate average amount spent per transaction
+data['amount_per_transaction'] = data['amount_spent'] / data.groupby('customer_id')['transaction_date'].transform('count')
+
+# Calculate average amount spent per customer
+average_spent_per_customer = total_spent.mean()
+
+# Calculate the most common transaction day of the week
+data['transaction_day'] = data['transaction_date'].dt.day_name()
+most_common_day = data['transaction_day'].mode().values[0]
+
+# Print the results
+print("Average amount spent per customer:", average_spent_per_customer)
+print("Most common transaction day:", most_common_day)
